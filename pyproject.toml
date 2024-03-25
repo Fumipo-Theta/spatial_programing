@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "spatial_programing"
+version = "0.1.0"
+description = "Tutorial for spatial programming with Python"
+authors = ["xr-specialist <xr-specialist-gr@access-company.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11.8"
+numpy = "^1.26"
+matplotlib = "^3.8"
+jupyter = "^1.0.0"
+jupyterlab = "^4.1.5"
+open3d = "^0.18.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "*"
+mypy = "*"
+black = "*"
+types-seaborn = "^0.13"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 119
+ignore = [
+  "D1", # Ignore docstring
+  "D211", # Use one-blank-line-before-class(D203)
+  "D212", # Use multi-line-summary-second-line(D213)
+  "A00", # Use id attribute
+  "B008", # Use Depends function call
+  "G004", # Use f-string log
+  "ANN101", # Ignore self annotation check
+  "ANN102", # Ignore cls annotation check
+  "ANN401", # Use typing.ANY
+  "TRY002", # Use predefined Exception
+  "TRY003", # Use long exception message
+  "TRY301", # Use raise within try block
+  "TRY400", # Use logging.error
+  "EM101", # String literal Exception message
+  "SIM108", # Disable `a if else b` style check
+  "SIM102", # Use nested if
+  "DTZ003", # Use datetime.datetime.utcnow()
+  "S105", # Use password like string
+  "ERA001", # Use code like comment
+  "FBT001", # Use boolean positional argument
+  "FBT002", # Use boolean keyword argument
+  "RET504", # Use variable for return value to explain it
+  "PGH003", # Ignore type check by using "type: ignore"
+  "PLC1901", # Use `v == ""` style
+  "PLR0911", # Use many returns
+  "PLR0913", # Use many args
+  "PLR2004", # Use magic value
+  "PTH103", # Use os.path
+  "PTH120", # Use os.path
+  "RUF001", # Use fullwidth ?
+  "TCH002", # Use type-checking impot without type-checking block
+  # This fixes db.query(Flow).filter(Flow.is_in_hub == True) and makes bug.
+  # See https://github.com/astral-sh/ruff/issues/1852#issuecomment-1638710110
+  "E712",
+]
+select = [
+  "ALL",
+]
+
+[tool.mypy]
+plugins = [
+  "pydantic.mypy"
+]
+strict = "True"
+ignore_missing_imports = "True"
+disable_error_code = ["attr-defined"]
