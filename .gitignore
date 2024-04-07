@@ -1,4 +1,6 @@
+.ipynb_checkpoints
 .venv
 *.pyc
 *.pyo
 *.pyd
+.DS_Store
