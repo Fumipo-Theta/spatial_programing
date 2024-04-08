@@ -52,4 +52,9 @@
    * ファイルフォーマットを `Alias Wavefront Object (OBJ)` とする
    * 結果として下記のファイル群が生成される
      * メッシュマテリアルの `.obj` ファイル
-     * マテリアルに関する
+     * マテリアルに関する `.mtl` ファイル
+     * テクスチャの `.png` ファイル
+
+* 上記で生成したカメラの OBJ モデルは、Unity asset としてインポート可能
+  * 下記のような見た目になる
+    ![Unityにインポートしたカメラモデル](./doc_images/unity_imported_camera_obj.png)
