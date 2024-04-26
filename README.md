@@ -2,6 +2,8 @@
 
 ## 環境セットアップ
 
+動作環境として、Mac または Linux を想定している。
+
 1. asdf と asdf の python plugin をインストール
    * [asdf インストール](https://asdf-vm.com/guide/getting-started.html)
    * `asdf plugin add python`
@@ -27,6 +29,11 @@
 1. `poetry run jupyter lab`
 2. Web ブラウザで [http://localhost:8888/lab](http://localhost:8888/lab) にアクセス
 3. `1_coordinate_system.ipynb` を開く
+
+別の方法として、`Jupyter` extension をインストールした VSCode 上で notebook を開いても良い
+
+* その場合、Jupyter kernel として poetry で作った仮想環境の python を設定すること
+
 
 ## コントリビューター向け情報
 
