@@ -2,7 +2,7 @@
 
 ## 環境セットアップ
 
-動作環境として、Mac または Linux を想定している。
+### Mac・Linux
 
 1. asdf と asdf の python plugin をインストール
    * [asdf インストール](https://asdf-vm.com/guide/getting-started.html)
@@ -24,7 +24,9 @@
 7. リポジトリの依存パッケージをインストール
    * `poetry install`
 
-Windows で動作させる場合、下記のように行う。ターミナルとして PowerShell の使用を前提とする。
+### Windows
+
+※ ターミナルとして PowerShell の使用を前提とする。
 
 1. pyenv のインストール
 2. python をインストール
@@ -39,7 +41,7 @@ Windows で動作させる場合、下記のように行う。ターミナルと
 7. リポジトリの依存パッケージをインストール
    * `poetry install`
 
-## テキストブック (Jupyter notebook) の起動
+## テキストブック (Jupyter notebook) の使用
 
 1. `poetry run jupyter lab`
 2. Web ブラウザで [http://localhost:8888/lab](http://localhost:8888/lab) にアクセス
