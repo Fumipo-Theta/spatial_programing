@@ -24,6 +24,21 @@
 7. リポジトリの依存パッケージをインストール
    * `poetry install`
 
+Windows で動作させる場合、下記のように行う。ターミナルとして PowerShell の使用を前提とする。
+
+1. pyenv のインストール
+2. python をインストール
+   * `$pythonVersion = Get-Content ./.tool-versions |  Select-String -Pattern "python" | ForEach-Object {$($_-split(" "))[1]}`
+   * `pyenv install $pythonVersion`
+3. poetry をインストール
+4. poetry へのパスを通す
+5. 仮想環境がリポジトリ内の `.venv/` に作られるようにする
+6. `.python-version` に定義された python のバージョンを使って仮想環境をアクティベート
+   * `$pythonVersion = Get-Content ./.tool-versions |  Select-String -Pattern "python" | ForEach-Object {$($_-split(" "))[1]}`
+   * `pyenv exec poetry env use $pythonVersion`
+7. リポジトリの依存パッケージをインストール
+   * `poetry install`
+
 ## テキストブック (Jupyter notebook) の起動
 
 1. `poetry run jupyter lab`
@@ -33,7 +48,6 @@
 別の方法として、`Jupyter` extension をインストールした VSCode 上で notebook を開いても良い
 
 * その場合、Jupyter kernel として poetry で作った仮想環境の python を設定すること
-
 
 ## コントリビューター向け情報
 
