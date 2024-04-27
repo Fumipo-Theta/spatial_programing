@@ -79,3 +79,35 @@ Windows で動作させる場合、下記のように行う。ターミナルと
 * 上記で生成したカメラの OBJ モデルは、Unity asset としてインポート可能
   * 下記のような見た目になる
     ![Unityにインポートしたカメラモデル](./doc_images/unity_imported_camera_obj.png)
+
+### ソースツリー
+
+チュートリアルでは Open3D の TriangleMesh や ViewControl を簡単に操作できるようなラッパーを使用している。
+それらは [`util_lib/`](./util_lib/) に定義してある。
+
+* [`camera.py`](./util_lib/camera.py)
+  * カメラモデルを実装している
+  * カメラモデルは `ICamera` インターフェースを実装する必要がある
+    * 内部パラメータを保持し、必要に応じてカメラ行列が得られるようにしている
+    * ワールド座標での transformation から外部パラメータを得られるようにしている
+* [`transformable_object.py`](./util_lib/transformable_object.py)
+  * Open3D の TriangleMesh クラスのラッパーである
+  * オブジェクト本体の並進や回転を行ったとき、ワールド座標での transformation を計算し保持する
+  * transformation を含めたオブジェクトのコピーを可能としている
+* [`types.py`](./util_lib/types.py)
+  * 共通して使用する型を定義している
+* [`visualization.py`](./util_lib/visualization.py)
+  * Open3D の Visualizer のラッパーである
+  * Open3D の Geometry をレンダリングする
+  * オプションでカメラモデル (`ICamera` 実装) を受け取り、そのカメラを初期視点に設定する
+* [`world.py`](./util_lib/world.py)
+  * チュートリアル用の 3D 空間を定義
+  * 座標軸や床面をデフォルトで配置している
+
+### コーディング規約
+
+* 共通
+  * リモートへの push 前にフォーマッター・リンターを適用する
+    * python script、Jupyter notebook では `ruff` を適用する
+* Jupyter notebook
+  * リモートへの push 前にコードセルのアウトプットを全て clear する
