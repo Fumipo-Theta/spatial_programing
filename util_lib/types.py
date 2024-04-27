@@ -13,6 +13,7 @@ class Axis(str, Enum):
     Y = "Y"
     Z = "Z"
 
+
 class EulerOrder(str, Enum):
     # Intrinsic axis rotation
     XYZ = "XYZ"

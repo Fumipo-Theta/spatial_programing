@@ -5,13 +5,9 @@ import open3d as o3d
 
 
 def create_coordinate_objects() -> o3d.geometry.TriangleMesh:
-    """
-    この関数は、座標軸を表すオブジェクトを生成します.
+    """この関数は、座標軸を表すオブジェクトを生成します."""
 
-    Returns:
-    """
-
-    def __create_spheres(xs, ys, zs, color):
+    def __create_spheres(xs, ys, zs, color):  # noqa: ANN202, ANN001
         spheres = []
         for x, y, z in zip(xs, ys, zs):
             sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.03)
