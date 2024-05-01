@@ -109,6 +109,7 @@ class OCamCalibOmniDirectionalCameraParameters(ICameraParameters):
 
 
 class OCamCalibOmniDirectionalCamera(ICamera):
+
     """
     Implementation of Fish Eye Camera by OCamCalib.
 

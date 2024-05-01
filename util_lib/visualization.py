@@ -28,7 +28,9 @@ def draw_geometries(
 
     if camera is not None:
         vis.create_window(
-            window_name=title or "Open3D", width=camera.get_image_size()[0], height=camera.get_image_size()[1]
+            window_name=title or "Open3D",
+            width=camera.get_image_size()[0],
+            height=camera.get_image_size()[1],
         )
     else:
         vis.create_window(window_name=title or "Open3D", width=1920, height=1080)
