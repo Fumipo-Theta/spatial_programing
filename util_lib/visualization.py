@@ -11,7 +11,11 @@ if TYPE_CHECKING:
     from .types import ICamera
 
 
-def draw_geometries(*geometries: o3d.geometry.Geometry | TransformableObject, camera: ICamera | None = None) -> None:
+def draw_geometries(
+    *geometries: o3d.geometry.Geometry | TransformableObject,
+    camera: ICamera | None = None,
+    title: str | None = None,
+) -> None:
     """
     Open3D の visualization API のラッパー関数.
 
@@ -23,9 +27,11 @@ def draw_geometries(*geometries: o3d.geometry.Geometry | TransformableObject, ca
     vis = o3d.visualization.Visualizer()
 
     if camera is not None:
-        vis.create_window(width=camera.get_image_size()[0], height=camera.get_image_size()[1])
+        vis.create_window(
+            window_name=title or "Open3D", width=camera.get_image_size()[0], height=camera.get_image_size()[1]
+        )
     else:
-        vis.create_window(width=1920, height=1080)
+        vis.create_window(window_name=title or "Open3D", width=1920, height=1080)
     render_option = vis.get_render_option()
 
     render_option.background_color = np.asarray([0, 0, 0.2])
