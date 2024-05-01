@@ -83,21 +83,6 @@ class ICameraParameters(abc.ABC):
         pass
 
 
-@dataclass
-class PinholeCameraParameters(ICameraParameters):
-    focal_length: float
-    principal_point: tuple[float, float]
-    image_size: tuple[int, int]
-
-    def get_intrinsic_matrix(self) -> np.ndarray:
-        fx, fy = self.focal_length, self.focal_length
-        cx, cy = self.principal_point
-        return np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1]])
-
-    def get_image_size(self) -> tuple[int, int]:
-        return self.image_size
-
-
 class ICamera(abc.ABC):
     @abc.abstractmethod
     def get_extrinsic_matrix(self) -> np.ndarray:
@@ -118,3 +103,7 @@ class ICamera(abc.ABC):
     @abc.abstractmethod
     def copy(self) -> ICamera:
         pass
+
+    @abc.abstractmethod
+    def world_to_camera(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray[bool], np.ndarray[bool]]:
+        """Return points in image coordinate, mask of points in front of camera, mask of points inside image."""
