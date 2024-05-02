@@ -4,3 +4,6 @@
 *.pyo
 *.pyd
 .DS_Store
+__ORGANIZATION__ONLY__*.ipynb
+data_internal_only/*
+!data_internal_only/.gitkeep
