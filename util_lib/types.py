@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 from dataclasses import dataclass
 from enum import Enum
+from typing import Callable
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -83,6 +84,9 @@ class ICameraParameters(abc.ABC):
         pass
 
 
+PointsFilterFunction = Callable[[np.ndarray], np.ndarray]
+
+
 class ICamera(abc.ABC):
     @abc.abstractmethod
     def get_extrinsic_matrix(self) -> np.ndarray:
@@ -105,5 +109,9 @@ class ICamera(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def world_to_camera(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray[bool], np.ndarray[bool]]:
-        """Return points in image coordinate, mask of points in front of camera, mask of points inside image."""
+    def world_to_camera(
+        self,
+        points: np.ndarray,
+        remove_hidden: bool,
+    ) -> tuple[np.ndarray, PointsFilterFunction]:
+        """Return points in image coordinate and filtering function which picks data corresponding to points."""

@@ -3,12 +3,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+import open3d as o3d
 from scipy.spatial.transform import Rotation
 
-from .types import EulerOrder, ICamera, ICameraParameters, Transform
+from .types import EulerOrder, ICamera, ICameraParameters, Transform, PointsFilterFunction
 
 
-def filter_visible_points(points: np.ndarray, image_width: int, image_height: int) -> np.ndarray:
+def filter_visible_points(
+    points: np.ndarray,
+    image_width: int,
+    image_height: int,
+) -> tuple[np.ndarray, np.ndarray[bool]]:
     # Filter points that are inside the image
     mask = np.where(
         (points[0, :] >= 0)
@@ -17,6 +22,38 @@ def filter_visible_points(points: np.ndarray, image_width: int, image_height: in
         & (points[1, :] <= image_height),
     )  # 0 <= y <= image_height [pixel]
     return points[:, *mask], mask
+
+
+def remove_hidden_points(
+    points: np.ndarray,
+    shell_range: tuple[float, float] = (1.0, 1.2),
+) -> tuple[np.ndarray, np.ndarray[bool]]:
+    """
+    Remove hidden points.
+
+    Note:
+    ----
+    - Core algorithm is based on the paper by Katz et al. (2007) below:
+        https://www.weizmann.ac.il/math/ronen/sites/math.ronen/files/uploads/katz_tal_basri_-_direct_visibility_of_point_sets.pdf
+    - To improve the robustness, we embed the points into a spherical shell.
+        - We intend to smooth the surface formed by the foreground points.
+
+    """
+    norm = np.linalg.norm(points, axis=0)
+    d_max = np.max(norm)
+    d_min = np.min(norm)
+
+    r_min, r_max = shell_range
+    dr = r_max - r_min
+
+    factor = (norm - d_min) / (d_max - d_min) * dr + r_min
+    embedded = points / norm * factor
+
+    pcd_crust = o3d.geometry.PointCloud()
+    pcd_crust.points = o3d.utility.Vector3dVector(embedded.T)
+
+    _, mask = pcd_crust.hidden_point_removal([0, 0, 0], radius=100)
+    return points[:, mask], mask
 
 
 @dataclass
@@ -69,7 +106,11 @@ class SimplePinholeCamera(ICamera):
     def copy(self) -> ICamera:
         return SimplePinholeCamera(self.__intrinsic_parameters, self.__current_transform.copy())
 
-    def world_to_camera(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray[bool], np.ndarray[bool]]:
+    def world_to_camera(
+        self,
+        points: np.ndarray,
+        remove_hidden: bool,
+    ) -> tuple[np.ndarray, PointsFilterFunction]:
         assert points.shape[0] == 3, f"Invalid shape: {points.shape}"  # noqa: S101
         ext_mat = self.get_extrinsic_matrix()
         k_mat = self.get_intrinsic_matrix()
@@ -78,6 +119,10 @@ class SimplePinholeCamera(ICamera):
         # Transform to camera coordinate
         points = np.vstack([points, np.ones(points.shape[1])])
         points_in_camera = ext_mat @ points
+
+        # Remove hidden points
+        if remove_hidden:
+            points_in_camera, mask_hidden_points = remove_hidden_points(points_in_camera[:3])
 
         # Filter points in front of camera
         mask_in_front_of_camera = points_in_camera[2] > 0
@@ -89,7 +134,12 @@ class SimplePinholeCamera(ICamera):
         points_in_image = k_mat @ points_in_camera[:3]
         points_in_image, mask_inside_image = filter_visible_points(points_in_image, image_size[0], image_size[1])
 
-        return points_in_image, mask_in_front_of_camera, mask_inside_image
+        def filter_points_func(data: np.ndarray) -> np.ndarray:
+            if remove_hidden:
+                return data[mask_hidden_points][mask_in_front_of_camera][mask_inside_image]
+            return data[mask_in_front_of_camera][mask_inside_image]
+
+        return points_in_image, filter_points_func
 
 
 @dataclass
@@ -109,7 +159,6 @@ class OCamCalibOmniDirectionalCameraParameters(ICameraParameters):
 
 
 class OCamCalibOmniDirectionalCamera(ICamera):
-
     """
     Implementation of Fish Eye Camera by OCamCalib.
 
@@ -147,7 +196,11 @@ class OCamCalibOmniDirectionalCamera(ICamera):
     def copy(self) -> ICamera:
         return OCamCalibOmniDirectionalCamera(self.__intrinsic_parameters, self.__current_transform.copy())
 
-    def world_to_camera(self, points: np.ndarray) -> tuple[np.ndarray, np.ndarray[bool], np.ndarray[bool]]:
+    def world_to_camera(
+        self,
+        points: np.ndarray,
+        remove_hidden: bool,
+    ) -> tuple[np.ndarray, PointsFilterFunction]:
         assert points.shape[0] == 3, f"Invalid shape: {points.shape}"  # noqa: S101
 
         ext_mat = self.get_extrinsic_matrix()
@@ -159,6 +212,9 @@ class OCamCalibOmniDirectionalCamera(ICamera):
         # Transform to camera coordinate
         points = np.vstack([points, np.ones(points.shape[1])])
         points_in_camera = ext_mat @ points
+
+        if remove_hidden:
+            points_in_camera, mask_hidden_points = remove_hidden_points(points_in_camera[:3])
 
         # points_2d repesensts the points in image coordinate
         points_2d = np.zeros((2, points_in_camera.shape[1]))
@@ -209,4 +265,10 @@ class OCamCalibOmniDirectionalCamera(ICamera):
 
         points_in_image, mask_inside_image = filter_visible_points(points_2d, image_size[0], image_size[1])
         mask_in_front_of_camera = points_2d[2] > 0
-        return points_in_image, mask_in_front_of_camera, mask_inside_image
+
+        def filter_points_func(data: np.ndarray) -> np.ndarray:
+            if remove_hidden:
+                return data[mask_hidden_points][mask_in_front_of_camera][mask_inside_image]
+            return data[mask_in_front_of_camera][mask_inside_image]
+
+        return points_in_image, filter_points_func
