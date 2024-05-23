@@ -13,7 +13,7 @@
    * `curl -sSL https://install.python-poetry.org | python -`
 4. poetry (`$HOME/.local/bin/poetry`) へのパスを通す
    * zsh の場合
-     * `echo 'export PATH=$HOME/.local/bin:$HOME' >> ~/.zshrc`
+     * `echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc`
      * `source ~/.zshrc`
      * `poetry --version` (確認)
 5. 仮想環境がリポジトリ内の `.venv/` に作られるようにする
