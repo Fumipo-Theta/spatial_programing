@@ -6,7 +6,7 @@ authors = ["xr-specialist <xr-specialist-gr@access-company.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11.8"
+python = "^3.11.11"
 numpy = "^1.26"
 matplotlib = "^3.8"
 jupyter = "^1.0.0"
