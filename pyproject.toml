@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Tutorial for spatial programming with Python"
 authors = ["xr-specialist <xr-specialist-gr@access-company.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11.11"
